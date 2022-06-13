@@ -1,5 +1,6 @@
 # ~/.bashrc
 
+shopt -s autocd
 [[ $- != *i* ]] && return
 
 prmpt() {
