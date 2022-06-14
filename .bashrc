@@ -18,7 +18,7 @@ prmpt() {
 	fi
 
 	[[ $branch ]] && _PS1+=`printf '[\e[1;36m%s\e[0m]' "${branch/\* }"`
-	[[ $tag ]] && _PS1+="-$tag "
+	[[ $tag ]] && _PS1+="-$tag " || _PS1+=' '
 	echo -n "$_PS1"
 
 PS1='$ '
