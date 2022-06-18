@@ -1,54 +1,40 @@
 # ~/.bashrc
 
-shopt -s autocd
+shopt -s autocd cdspell dirspell cdable_vars
 [[ $- != *i* ]] && return
 
-prmpt() {
-	echo
-
+prompt_command() {
 	local dir=`pwd`
 	local branch=`git branch 2>/dev/null`
 	local tag=`git tag 2>/dev/null`
 
-	if [[ $dir != $HOME ]] ; then
+	[[ $dir != $HOME ]] && {
 		local dir=${dir/$HOME\/}
 		_PS1="$dir "
-	else
-		_PS1='~ '
-	fi
-
+	} || _PS1='~ '
 	[[ $branch ]] && _PS1+=`printf '[\e[1;36m%s\e[0m]' "${branch/\* }"`
 	[[ $tag ]] && _PS1+="-$tag " || _PS1+=' '
-	echo -n "$_PS1"
 
-PS1='$ '
+	printf "$_PS1"
 
-	timeStart=$(date +%s)
+	[[ $EUID -eq 0 ]] && symbol='#' || symbol='$'
+	timeStart=`date +%s`
 
 	sec=$(((timeStart-timeEnd)%60))
 	min=$(((timeStart-timeEnd)%3600/60))
 	hr=$(((timeStart-timeEnd)/3600))
-	secs=`printf '\e[32m%s\e[0ms ' "$sec"`
-	mins=`printf '\e[33m%s\e[0mm, ' "$min"`
-	hrs=`printf '\e[31m%s\e[0mh, ' "$hr"`
-	if (( $hr > 0 )) ; then
-		hr=`printf '\e[31m%s\e[0mh, ' "$hr"`
-		timer="in $hrs $mins $secs"
-	elif (( $hr <= 0 && $min > 0 )) ; then
-		min=`printf '\e[33m%s\e[0mm, ' "$min"`
-		timer="in $mins $secs"
-	elif (( $sec > 0 )) ; then
-		sec=`printf '\e[32m%s\e[0ms ' "$sec"`
-		timer="in $secs"
-	fi
 
-	timeEnd=$timeStart
-	
+	timer=''
+	(( $hr > 0 )) && timer=`printf '\e[31m%s\e[0mh, ' "$hr"`
+	(( $min > 0 )) && timer+=`printf '\e[33m%s\e[0mm, ' "$min"`
+	(( $sec > 0 )) && timer+=`printf '\e[32m%s\e[0ms ' "$sec"`
+
 	echo $timer
-
 	[[ $EUID -eq 0 ]] && symbol='#' || symbol='$'
 
 	PS1="\$([[ \$? -eq 0 ]] && printf '\e[1;32m%s\e[0m ' "$symbol" || printf '\e[1;31m%s\e[0m ' "$symbol")"
+	timeEnd=`date +%s`
 }
-PROMPT_COMMAND=prmpt
-timeEnd=$(date +%s)
+
+PROMPT_COMMAND=prompt_command
+#timeEnd=$(date +%s)
