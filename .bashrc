@@ -30,11 +30,11 @@ prompt_command() {
 	(( $sec > 0 )) && timer+=`printf '\e[32m%s\e[0ms ' "$sec"`
 
 	echo $timer
-	[[ $EUID -eq 0 ]] && symbol='#' || symbol='$'
 
 	PS1="\$([[ \$? -eq 0 ]] && printf '\e[1;32m%s\e[0m ' "$symbol" || printf '\e[1;31m%s\e[0m ' "$symbol")"
-	timeEnd=`date +%s`
+
+	timeEnd=$timeStart
 }
 
 PROMPT_COMMAND=prompt_command
-#timeEnd=$(date +%s)
+timeEnd=$(date +%s)
