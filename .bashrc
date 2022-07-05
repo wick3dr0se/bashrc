@@ -25,7 +25,7 @@ prompt_command() {
   timeEnd=$timeStart
 
   printf '%s \e[36m%s \e[0m%s %s\n' \
-    "$dir" "${branch/*}" "$tag" "$timer"
+    "$dir" "${branch#* }" "$tag" "$timer"
 }
 
 PROMPT_COMMAND=prompt_command
