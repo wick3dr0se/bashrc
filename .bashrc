@@ -1,4 +1,33 @@
 # ~/.bashrc
+
+# if not running interactively, end
+[[ $- != *i* ]] && return
+
+alias b='bash'
+alias bs='. ~/.bashrc'
+alias v='vim'
+alias vrc='v ~/.vimrc'
+alias brc='v ~/.bashrc'
+alias rm='rm -fr'
+
+alias ls='ls --file-type --color=auto'
+alias la='ls -A'
+alias ll='ls -l'
+
+gitc(){ # git clone
+  if [[ ! $1 ]]; then
+    printf 'Must specifiy a repository\n'; return 1
+  elif [[ $2 ]]; then
+    user="$1" repo="$2"
+  elif [[ $1 =~ / ]]; then
+    user="${1%%/*}" repo="${1##*/}"
+  fi
+  
+  git clone https://github.com/"${user:-wick3dr0se}"/"${repo:=$1}"
+  cd "$repo"; printf '\e[2J\e[H'; ls
+}
+
+# prompt
 shopt -s autocd cdspell dirspell cdable_vars
 
 prompt_command() {
@@ -7,19 +36,19 @@ prompt_command() {
   branch=$(git branch 2>/dev/null)
   tag=$(git tag 2>/dev/null)
 
-  [[ $EUID -eq 0 ]] && symbol='#' || symbol='$'
-
+	[[ $EUID -eq 0 ]] && symbol='#' || symbol='$'
+  
   timeStart=$(date +%s)
 
-  sec=$(((timeStart-timeEnd)%60))
-  min=$(((timeStart-timeEnd)%3600/60))
-  hr=$(((timeStart-timeEnd)/3600))
+	sec=$(((timeStart-timeEnd)%60))
+	min=$(((timeStart-timeEnd)%3600/60))
+	hr=$(((timeStart-timeEnd)/3600))
 
-  timer=
+	timer=
   (( $hr > 0 )) && timer=$(printf '\e[31m%s\e[0mh, ' "$hr")
   (( $min > 0 )) && timer+=$(printf '\e[33m%s\e[0mm, ' "$min")
   (( $sec > 0 )) && timer+=$(printf '\e[32m%s\e[0ms ' "$sec")
-
+  
   [[ $timer ]] && timer="in $timer"
 
   timeEnd=$timeStart
